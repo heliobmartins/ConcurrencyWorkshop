@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/challenge/test"
+	"github.com/heliobmartins/concurrencyworkshop/internal/challenge/test"
 )
 
 // nolint

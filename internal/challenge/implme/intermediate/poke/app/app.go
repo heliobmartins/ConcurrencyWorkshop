@@ -13,7 +13,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/challenge/implme/intermediate/poke/client"
+	"github.com/heliobmartins/concurrencyworkshop/internal/challenge/implme/intermediate/poke/client"
 )
 
 const (

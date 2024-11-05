@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/goroutine/counter"
+	"github.com/heliobmartins/concurrencyworkshop/internal/goroutine/counter"
 )
 
 var reset = "\033[0m"

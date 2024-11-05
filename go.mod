@@ -1,4 +1,4 @@
-module github.com/romangurevitch/concurrencyworkshop
+module github.com/heliobmartins/concurrencyworkshop
 
 go 1.23.2
 

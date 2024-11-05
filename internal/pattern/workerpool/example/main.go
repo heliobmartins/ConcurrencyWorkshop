@@ -8,7 +8,7 @@ import (
 
 	"github.com/mtslzr/pokeapi-go"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/pattern/workerpool"
+	"github.com/heliobmartins/concurrencyworkshop/internal/pattern/workerpool"
 )
 
 // FetchPokemonName just returns the Pokemon name as a string.

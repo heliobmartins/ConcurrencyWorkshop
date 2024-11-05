@@ -9,7 +9,7 @@ import (
 	"gonum.org/v1/plot/plotutil"
 	"gonum.org/v1/plot/vg"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/challenge/implme/advanced/rapidio/simulator"
+	"github.com/heliobmartins/concurrencyworkshop/internal/challenge/implme/advanced/rapidio/simulator"
 )
 
 type statistic struct {

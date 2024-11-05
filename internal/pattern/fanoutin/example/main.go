@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/pattern/fanoutin"
+	"github.com/heliobmartins/concurrencyworkshop/internal/pattern/fanoutin"
 )
 
 var ErrNegativeValue = errors.New("negative value")

@@ -9,7 +9,7 @@ import (
 	"github.com/mtslzr/pokeapi-go"
 	"golang.org/x/time/rate"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/pattern/dynamic"
+	"github.com/heliobmartins/concurrencyworkshop/internal/pattern/dynamic"
 )
 
 // FetchPokemonName just returns the Pokemon name as a string.

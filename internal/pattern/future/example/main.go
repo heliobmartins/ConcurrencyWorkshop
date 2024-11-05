@@ -8,7 +8,7 @@ import (
 	"github.com/mtslzr/pokeapi-go"
 	"github.com/mtslzr/pokeapi-go/structs"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/pattern/future"
+	"github.com/heliobmartins/concurrencyworkshop/internal/pattern/future"
 )
 
 func main() {

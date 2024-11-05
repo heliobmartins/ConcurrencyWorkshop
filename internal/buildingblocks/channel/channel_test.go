@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/romangurevitch/concurrencyworkshop/internal/challenge/test"
+	"github.com/heliobmartins/concurrencyworkshop/internal/challenge/test"
 )
 
 // TestBasicChannelUsage demonstrates intermediate usage of channels for communication between goroutines.
