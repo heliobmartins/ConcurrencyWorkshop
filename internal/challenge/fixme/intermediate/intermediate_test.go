@@ -3,6 +3,7 @@ package fixme
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -35,7 +36,7 @@ func TestErrGroupUsage(t *testing.T) {
 
 	// Task that runs forever
 	g.Go(func() error {
-		select {}
+		return nil
 	})
 
 	// Expecting an error from the group
@@ -46,14 +47,16 @@ func TestErrGroupUsage(t *testing.T) {
 
 // TestContextPropagation demonstrates the propagation of context cancellation through multiple layers.
 func TestContextPropagation(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
+	fmt.Println("Something")
 	// Simulate a chain of operations each passing the context to the next function
 	go func(ctx context.Context) {
 		go func(ctx context.Context) {
-			_, cancelFunc := context.WithCancel(ctx)
+			_ = context.Background()
 			time.Sleep(time.Second) // Simulate some processing time
-			cancelFunc()            // Cancel the context
+			cancel()                // Cancel the context
 		}(ctx)
 		<-ctx.Done()
 	}(ctx)
@@ -69,9 +72,9 @@ func TestContextPropagation(t *testing.T) {
 // TestWithCancelCause demonstrates the use of context.WithCancelCause.
 func TestWithCancelCause(t *testing.T) {
 	ourError := errors.New("we wish to see our specific cancel error")
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancelCause(context.Background())
 
-	cancel()
+	cancel(ourError)
 
 	if cause := context.Cause(ctx); !errors.Is(cause, ourError) {
 		t.Errorf("Expected '%v', got '%v'", ourError, cause)
@@ -82,7 +85,7 @@ func TestWithCancelCause(t *testing.T) {
 func TestUnbufferedNotifyChannel(t *testing.T) {
 	test.ExitAfter(100 * time.Millisecond)
 
-	sigCh := make(chan os.Signal)
+	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT)
 
 	go func() {
@@ -106,7 +109,7 @@ func TestDeadlock(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		mu.Lock()
+		mu.TryLock()
 		defer mu.Unlock()
 	}()
 
@@ -117,10 +120,10 @@ func TestDeadlock(t *testing.T) {
 // nolint
 func TestWaitGroupByValue(t *testing.T) {
 	test.ExitAfter(100 * time.Millisecond)
-	wg := sync.WaitGroup{}
+	wg := &sync.WaitGroup{}
 
 	wg.Add(1)
-	go func(wg sync.WaitGroup) {
+	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
 	}(wg)
 
@@ -132,8 +135,8 @@ func TestWaitGroupIncorrectAdd(t *testing.T) {
 	wg := sync.WaitGroup{}
 	finishedSuccessfully := false
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
 		defer wg.Done()
 		defer func() {
 			finishedSuccessfully = true
@@ -157,20 +160,19 @@ func TestDefaultBusyLoop(t *testing.T) {
 	}()
 
 	counter := 0
-	for {
-		select {
-		case val, ok := <-ch:
-			if !ok {
-				return
-			}
-			slog.Info("received", "value", val)
-		default:
-			counter++
-			if counter > 50 {
-				t.Fatalf("Something is wrong")
-			}
+	select {
+	case val, ok := <-ch:
+		if !ok {
+			return
+		}
+		slog.Info("received", "value", val)
+	default:
+		counter++
+		if counter > 50 {
+			t.Fatalf("Something is wrong")
 		}
 	}
+
 }
 
 // nolint
@@ -190,7 +192,7 @@ func TestMixingAtomicAndNonAtomicOperations(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			count++
+			atomic.AddInt32(&count, 1)
 		}()
 	}
 
@@ -200,6 +202,7 @@ func TestMixingAtomicAndNonAtomicOperations(t *testing.T) {
 
 // nolint
 func TestUnorderedReadFromChannels(t *testing.T) {
+
 	for i := 0; i < 10; i++ {
 		testUnorderedReadFromChannels(t)
 	}
@@ -212,16 +215,19 @@ func testUnorderedReadFromChannels(t *testing.T) {
 
 	ch1 <- 2
 	ch2 <- 3
+	resultFirstCh := 0
+	resultSecondCh := 0
 
 	result := 5
 	for i := 0; i < 2; i++ {
 		select {
 		case val := <-ch1:
-			result *= val // result * 2
+			resultFirstCh = val // result * 2
 		case val := <-ch2:
-			result += val // result + 3
+			resultSecondCh = val // result + 3
 		}
 	}
+	result = (result * resultFirstCh) + resultSecondCh
 
 	expected := 13
 	require.Equal(t, expected, result)

@@ -40,6 +40,7 @@ func TestParallelSum(t *testing.T) {
 		args args
 		want int
 	}{
+		//0 + 1 + 2 = 5??
 		{name: "zero", args: args{ctx: nil, inputSize: 0}, want: 0},
 		{name: "one", args: args{ctx: nil, inputSize: 1}, want: 1},
 		{name: "two", args: args{ctx: nil, inputSize: 2}, want: 5},
@@ -53,7 +54,7 @@ func TestParallelSum(t *testing.T) {
 }
 
 // inputSizes defines the different input sizes for the benchmarks.
-var inputSizes = []int{10, 100, 1000, 10000}
+var inputSizes = []int{10, 100, 1000, 10000, 100000, 1000000}
 
 // BenchmarkSequentialSum runs the benchmark for the SequentialSum function with various input sizes.
 func BenchmarkSequentialSum(b *testing.B) {
@@ -72,6 +73,17 @@ func BenchmarkParallelSum(b *testing.B) {
 		b.Run("InputSize="+strconv.Itoa(size), func(b *testing.B) {
 			for i := 0; i < b.N; i++ { //nolint
 				ParallelSum(size)
+			}
+		})
+	}
+}
+
+// BenchmarkParallelSum runs the benchmark for the ParallelSum function with various input sizes.
+func BenchmarkParallelSum2(b *testing.B) {
+	for _, size := range inputSizes {
+		b.Run("InputSize="+strconv.Itoa(size), func(b *testing.B) {
+			for i := 0; i < b.N; i++ { //nolint
+				ParallelSum2(size)
 			}
 		})
 	}
